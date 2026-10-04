@@ -268,6 +268,29 @@ class Database {
             PDO::ATTR_EMULATE_PREPARES   => false,
         );
 
+        $ssl_ca = isset($database_config['ssl_ca']) ? trim((string) $database_config['ssl_ca']) : '';
+        if ($ssl_ca !== '' && !is_file($ssl_ca) && defined('ROOT_DIR')) {
+            $project_ca = ROOT_DIR . 'app' . DIRECTORY_SEPARATOR . 'certs' . DIRECTORY_SEPARATOR . basename($ssl_ca);
+            if (is_file($project_ca)) {
+                $ssl_ca = $project_ca;
+            }
+        }
+        if ($driver === 'mysql' && $ssl_ca !== '') {
+            $ssl_ca_option = defined('Pdo\\Mysql::ATTR_SSL_CA')
+                ? constant('Pdo\\Mysql::ATTR_SSL_CA')
+                : (defined('PDO::MYSQL_ATTR_SSL_CA') ? PDO::MYSQL_ATTR_SSL_CA : null);
+            $verify_server_option = defined('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')
+                ? constant('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')
+                : (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT') ? PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT : null);
+
+            if ($ssl_ca_option !== null) {
+                $options[$ssl_ca_option] = $ssl_ca;
+            }
+            if ($verify_server_option !== null) {
+                $options[$verify_server_option] = true;
+            }
+        }
+
         try {
             $this->db = new PDO($dsn, $username, $password, $options);
             $this->driver = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);

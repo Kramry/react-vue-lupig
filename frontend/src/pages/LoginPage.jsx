@@ -20,7 +20,7 @@ export function LoginPage() {
     setError('')
     setBusy(true)
     try {
-      await login({ email, password })
+      await login({ username: email, password })
     } catch (err) {
       setError(apiErrorMessage(err))
     } finally {
@@ -64,10 +64,10 @@ export function LoginPage() {
         </form>
         {USE_MOCK ? (
           <p className="hint">
-            Demo account: <code>admin@stockboard.local</code> / <code>password123</code>
+            Demo account: <code>admin</code> / <code>admin123</code>
           </p>
         ) : (
-          <p className="hint">Use the account created in your LavaLust users table.</p>
+          <p className="hint">Use the account configured by the LavaLust API.</p>
         )}
       </section>
       <aside className="login-aside">

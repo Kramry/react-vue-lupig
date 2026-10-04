@@ -67,6 +67,37 @@ if (file_exists(ROOT_DIR . '.env')) {
     }
 }
 
+// Optionally inherit database settings from a shared environment file.
+$db_env_file = getenv('DB_ENV_FILE');
+if ($db_env_file) {
+	$db_env_path = realpath(ROOT_DIR . $db_env_file);
+	$db_env_keys = ['DB_DRIVER', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_USER', 'DB_PASSWORD', 'DB_CHARSET', 'DB_PREFIX', 'DB_SSL_CA', 'DB_NAME'];
+
+	if ($db_env_path && is_file($db_env_path)) {
+		foreach (file($db_env_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+			$line = trim($line);
+			if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) continue;
+
+			[$key, $value] = explode('=', $line, 2);
+			$key = trim($key);
+			$value = trim($value);
+			if (!in_array($key, $db_env_keys, true)) continue;
+			if (getenv($key) !== false && getenv($key) !== '') continue;
+
+			if (strlen($value) >= 2 && in_array($value[0], ['"', "'"], true) && $value[-1] === $value[0]) {
+				$value = substr($value, 1, -1);
+			}
+			if ($key === 'DB_SSL_CA' && $value !== '' && !is_file($value)) {
+				$external_ca = dirname($db_env_path) . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $value);
+				if (is_file($external_ca)) $value = $external_ca;
+			}
+
+			putenv("$key=$value");
+			$_ENV[$key] = $_SERVER[$key] = $value;
+		}
+	}
+}
+
 /**
  * LavaLust BASE URL of your APPLICATION
  */

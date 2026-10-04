@@ -12,10 +12,10 @@ export async function createProduct(product) {
 }
 
 export async function updateProduct(id, product) {
-  const payload = await request('PUT', `/products/${id}`, { body: product })
+  const payload = await request('POST', `/products/${id}`, { body: product })
   return unwrap(payload) ?? payload
 }
 
 export async function deleteProduct(id) {
-  return request('DELETE', `/products/${id}`)
+  return request('GET', `/products/${id}/delete`)
 }
