@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { mockRequest } from './mock'
 
-export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+export const USE_MOCK = true
 export const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/+$/, '')
 
 const TOKEN_KEY = 'stockboard.access_token'
