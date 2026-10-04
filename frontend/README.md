@@ -2,9 +2,6 @@
 
 React app for the Product Management System. Login is required before product CRUD. All HTTP calls go to a LavaLust API — never directly to MySQL.
 
-- `frontend/` — React app (login, product list, add / edit / delete, logout)
-- LavaLust API is **not** part of this step. The UI talks to HTTP endpoints (or a built-in mock while the API is unfinished).
-
 ## Run
 
 ```bash
@@ -39,7 +36,3 @@ Bearer JWT on every product request.
 - `DELETE /products/{id}`
 
 Product fields match the lab table: `id`, `product_name`, `description`, `price`, `quantity`, `created_at`.
-
-See `frontend/README.md` for the API contract and environment variables.
-
-Do not put database passwords in this repo. The React app must not connect to Aiven MySQL.
